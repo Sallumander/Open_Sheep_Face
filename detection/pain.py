@@ -32,7 +32,7 @@ class Pain:
                 image_hog = image_hog.astype(np.float32)
                 if not np.all(np.isfinite(image_hog)):
                     continue
-                prob = self.pain_model[2].predict_proba(image_hog.reshape(1, -1))[0][1]  # probability of class 1
+                prob = self.pain_model.predict_proba(image_hog.reshape(1, -1))[0][1]  # probability of class 1
                 predictions.append(prob * 100)  # scale to percentage
 
             face_predictions = []
