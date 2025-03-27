@@ -326,8 +326,10 @@ class VideoPlayerWidget(QWidget):
             QMessageBox.information(self, "Export", "No detection data to export.")
             return
 
-        
-        save_path, _ = QFileDialog.getSaveFileName(self, "Save Annotated Video", "annotated_output.mp4", "Videos (*.mp4 *.avi)")
+        vpath = self.video_path
+        base_name = os.path.splitext(os.path.basename(vpath))[0]  # Extract file name without extension
+        default_name = f"{base_name}_output.csv"
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save CSV Date", default_name, "CSV Files (*.csv)")
         if not save_path:
             return
         
@@ -347,7 +349,11 @@ class VideoPlayerWidget(QWidget):
         if not self.cap:
             return
 
-        save_path, _ = QFileDialog.getSaveFileName(self, "Save Annotated Video", "annotated_output.mp4", "Videos (*.mp4 *.avi)")
+        vpath = self.video_path
+        base_name = os.path.splitext(os.path.basename(vpath))[0]  # Extract file name without extension
+        default_name = f"{base_name}_annotated.mp4"
+
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save Annotated Video", default_name "Videos (*.mp4 *.avi)")
         if not save_path:
             return
 
