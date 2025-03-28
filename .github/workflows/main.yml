@@ -8,11 +8,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, ]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       - name: Checkout code
@@ -29,12 +28,20 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build executable
+      - name: Build app (onedir)
         run: |
           pyinstaller app.py
+
+      - name: Rename macOS app bundle
+        if: matrix.os == 'macos-latest'
+        run: |
+          mkdir -p dist/AppBundle
+          mv dist/app dist/AppBundle/app.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-${{ matrix.os }}
-          path: dist/app*
+          path: |
+            dist/app/
+            dist/AppBundle/
