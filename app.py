@@ -22,7 +22,7 @@ class LandmarkDetectionApp(QWidget):
         self.background_label.setScaledContents(True)
         self.background_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.background_label.lower() 
-        self.display_background_image()  # or the correct path
+        self.display_background_image() 
 
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
@@ -110,7 +110,7 @@ class LandmarkDetectionApp(QWidget):
             "2. If you upload an image, it will display detections and close-ups.\n"
             "3. If you upload a video, the video player will open for review.\n"
             "4. Use ← / → to cycle through close-ups (images only).\n"
-            "5. Pain probability is shown when faces are detected.\n\n"
+            "5. Pain probability is shown both on the full image and underneath each closeup.\n\n"
             "Supported file types: PNG, JPG, JPEG, MP4, AVI, MOV."
         )
 
@@ -186,17 +186,17 @@ class LandmarkDetectionApp(QWidget):
            
 
             # Draw pain score per face
-            for score, box in zip(self.pain_scores, _):  # '_' is the list of boxes returned by detect_faces_and_landmarks
+            for score, box in zip(self.pain_scores, _): 
                 box = np.array(box).flatten()
                 x1, y1, x2, y2 = map(int, box)
                 # Ensure the text is within the image boundaries
-                text_x = (x1 + x2) // 2
+                text_x = (x1 + x2) // 3
                 text_y = y2 + 30  # Default position below the bounding box
                 if text_y > processed_img.shape[0]:  # If the text goes outside the image height
-                    text_y = y2 - 10  # Move the text above the bounding box
+                    text_y = y2 - 5  # Move the text above the bounding box
                 label = f"{score:.1f}%"
                 cv2.putText(processed_img, label, (text_x, text_y),  # below the bounding box
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
             self.display_full_image(processed_img)
 
@@ -252,8 +252,8 @@ class LandmarkDetectionApp(QWidget):
         # Update label with the corresponding pain score
         if hasattr(self, "pain_scores") and self.current_closeup_index < len(self.pain_scores):
             score = self.pain_scores[self.current_closeup_index]
-            self.pain_probability_label.setText(f"Pain: {score:.1f}%")
-            self.pain_probability_label.setStyleSheet("font-size: 45px; color: red; font-weight: bold;")
+            self.pain_probability_label.setText(f"Probability Sheep \n is in Pain: {score:.1f}%")
+            self.pain_probability_label.setStyleSheet("font-size: 42px; color: red; font-weight: bold; background-color: white;")
             self.pain_probability_label.setVisible(True)
         else:
             self.pain_probability_label.setText("Pain: N/A")
@@ -286,7 +286,7 @@ class LandmarkDetectionApp(QWidget):
 
 
 if __name__ == '__main__':
-    print("🟢 App is starting... please wait.")
+    print("App is starting... please wait.")
     app = QApplication(sys.argv)
     window = LandmarkDetectionApp()
     window.show()

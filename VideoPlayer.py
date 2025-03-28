@@ -353,7 +353,7 @@ class VideoPlayerWidget(QWidget):
         base_name = os.path.splitext(os.path.basename(vpath))[0]  # Extract file name without extension
         default_name = f"{base_name}_annotated.mp4"
 
-        save_path, _ = QFileDialog.getSaveFileName(self, "Save Annotated Video", default_name "Videos (*.mp4 *.avi)")
+        save_path, _ = QFileDialog.getSaveFileName(self, "Save Annotated Video", default_name, "Videos (*.mp4 *.avi)")
         if not save_path:
             return
 
