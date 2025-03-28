@@ -8,6 +8,7 @@ from PyQt5.QtCore import Qt
 from detection.detect import FaceLandmarkDetector
 from detection.pain import Pain
 from VideoPlayer import VideoPlayerWidget
+import multiprocessing
 
 class LandmarkDetectionApp(QWidget):
     def __init__(self):
@@ -286,6 +287,34 @@ class LandmarkDetectionApp(QWidget):
 
 
 if __name__ == '__main__':
+
+    # Safety for Windows frozen apps (prevents subprocess bugs)
+    multiprocessing.freeze_support()
+
+    # For macOS .app bundles: fix working directory so file dialogs don't re-launch app
+    if hasattr(sys, 'frozen') and sys.platform == "darwin":
+        try:
+            from Foundation import NSBundle
+            bundle = NSBundle.mainBundle()
+            if bundle:
+                os.chdir(os.path.dirname(sys.executable))
+        except ImportError:
+            pass
+    app = QApplication(sys.argv)
+    window = LandmarkDetectionApp()
+
+    # Optional: If an image path is passed as a command-line argument, open it
+    if len(sys.argv) > 1:
+        image_path = sys.argv[1]
+        if os.path.isfile(image_path):
+            try:
+                window.load_image(image_path)  # You must define this method in your class
+            except Exception as e:
+                print(f"Failed to load image from CLI argument: {e}")
+
+    window.show()
+    sys.exit(app.exec_())
+ 
     print("App is starting... please wait.")
     app = QApplication(sys.argv)
     window = LandmarkDetectionApp()
